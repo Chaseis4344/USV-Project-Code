@@ -49,8 +49,16 @@ function MapComponent() {
 
   const onMapClick = event => {
     const newMarker = { lat: event.latLng.lat(), lng: event.latLng.lng() };
-    setMarkers(prev => [...prev, newMarker]);
-  };
+    
+    if (markers.length >= 3) {
+        const newMarkers = [...markers];
+        newMarkers.splice(newMarkers.length - 1, 0, newMarker);  // Insert the new marker before the last one
+        setMarkers(newMarkers);
+    } else {
+        setMarkers(prev => [...prev, newMarker]);
+    }
+};
+
 
   const clearMarkers = () => {
     setMarkers([]);
