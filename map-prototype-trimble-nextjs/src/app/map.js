@@ -21,7 +21,7 @@ function TrimbleMapComponent() {
             hash: true,
             satelliteProvider: TrimbleMaps.Common.SatelliteProvider.SAT6,
         });
-
+/*
         const Draw = new TrimbleMapsControl.Draw({
             displayControlsDefault: false,
             controls: {
@@ -54,7 +54,7 @@ function TrimbleMapComponent() {
                 }
             });
         });
-
+*/
         return () => {
             Map.remove();
         };
