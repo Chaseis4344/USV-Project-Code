@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import * as turf from '@turf/turf';
+import DownloadButton from './DownloadButton';
 
 function TrimbleMapComponent() {
     const [map, setMap] = useState(null);
@@ -73,9 +74,21 @@ function TrimbleMapComponent() {
                     if (feature.geometry.type === 'Polygon') {
                         const lineIds = surveyLinesMap.get(feature.id);
                         if (lineIds) {
-                            const result = draw.delete(lineIds); // Capture the result of deletion if available
-                            console.log(`Deletion result for IDs [${lineIds.join(', ')}]:`, result); // Log the result
-                            surveyLinesMap.delete(feature.id);
+                            draw.delete(lineIds);
+                            console.log('Deletion attempted for line IDs:', lineIds);
+            
+                            // Check if the lines still exist after deletion attempt
+                            const remainingFeatures = lineIds.map(id => draw.get(id));
+                            const remainingFeaturesExist = remainingFeatures.some(feature => feature !== null);
+                            console.log('Do any deleted features remain?', remainingFeaturesExist);
+            
+                            // Proceed to delete the IDs from the map only if they no longer exist
+                            if (!remainingFeaturesExist) {
+                                surveyLinesMap.delete(feature.id);
+                                console.log(`Deleted old lines for feature ID: ${feature.id}`);
+                            } else {
+                                console.error('Some features were not deleted:', remainingFeatures);
+                            }
                         }
                     }
                 });
@@ -125,10 +138,41 @@ function TrimbleMapComponent() {
         }
     }, [map, draw, surveyLinesMap]); // Dependencies on map, draw, and surveyLinesMap
 
+    const getPolygonData = () => {
+        const polygonData = [];
+        for (const [_, lineIds] of surveyLinesMap.entries()) {
+            const lines = lineIds.map(lineId => {
+                const line = draw.get(lineId); // Retrieve the line feature from the draw instance
+                if (line) {
+                    const coordinates = line.geometry.coordinates;
+                    // Transform the coordinates if necessary to match your waypoint format
+                    return {
+                        type: "Feature",
+                        properties: {},
+                        geometry: {
+                            type: "LineString",
+                            coordinates: coordinates
+                        },
+                        id: line.id
+                    };
+                }
+                return null;
+            }).filter(line => line !== null); // Filter out any nulls in case a line wasn't found
+    
+            polygonData.push(...lines);
+        }
+        return polygonData;
+    };
+
     return (
-        <div id="myMap" style={{ height: '900px', width: '1440px' }}></div>
+        <div>
+            <div id="myMap" style={{ height: '900px', width: '1440px' }}></div>
+            {/* Use the DownloadButton component and pass the getPolygonData function as a prop */}
+            <DownloadButton getPolygonData={getPolygonData} />
+        </div>
     );
 }
+
 
 function dividePolygonIntoSurveyLines(polygon, lineSpacing) {
     const boundingBox = turf.bbox(polygon);
