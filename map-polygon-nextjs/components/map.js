@@ -73,7 +73,8 @@ function TrimbleMapComponent() {
                     if (feature.geometry.type === 'Polygon') {
                         const lineIds = surveyLinesMap.get(feature.id);
                         if (lineIds) {
-                            draw.delete(lineIds);
+                            const result = draw.delete(lineIds); // Capture the result of deletion if available
+                            console.log(`Deletion result for IDs [${lineIds.join(', ')}]:`, result); // Log the result
                             surveyLinesMap.delete(feature.id);
                         }
                     }
@@ -84,25 +85,26 @@ function TrimbleMapComponent() {
                 e.features.forEach(feature => {
                     if (feature.geometry.type === 'Polygon') {
                         const oldLineIds = surveyLinesMap.get(feature.id);
+                        console.log('Old line IDs to delete:', oldLineIds);
+            
                         if (oldLineIds) {
-                            draw.delete(oldLineIds); // Delete old lines using their IDs
-                            surveyLinesMap.delete(feature.id); // Remove the old IDs from the map
+                            const deletionResult = draw.delete(oldLineIds);
+                            console.log(`Deletion result:`, deletionResult); // Log result of deletion
+                            surveyLinesMap.delete(feature.id);
+                            console.log(`Deleted old lines for feature ID: ${feature.id}`);
                         }
             
-                        // Recalculate the new survey lines for the updated polygon
                         const newLines = dividePolygonIntoSurveyLines(feature, 0.0005);
-                        // Add new lines with unique IDs and store the new IDs
                         const newLineIds = newLines.map(line => {
-                            const lineWithId = {
-                                ...line, // Spread the original line object
-                                id: generateUUID() // Assign a UUID to the line
-                            };
-                            draw.add(lineWithId); // Add the line with its new UUID to the draw instance
-                            return lineWithId.id; // Return the UUID for storage
+                            const lineWithId = { ...line, id: lineIdCounter++ };
+                            draw.add(lineWithId);
+                            return lineWithId.id;
                         });
             
-                        // Update the surveyLinesMap with the new line UUIDs
+                        // Log new line IDs and confirm they are stored
+                        console.log('New line IDs:', newLineIds);
                         surveyLinesMap.set(feature.id, newLineIds);
+                        console.log(`Updated surveyLinesMap for feature ID: ${feature.id}`, surveyLinesMap.get(feature.id));
                     }
                 });
             };
