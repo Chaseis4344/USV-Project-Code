@@ -7,7 +7,7 @@ import DownloadButton from './DownloadButton';
 function TrimbleMapComponent() {
     const [map, setMap] = useState(null);
     const [draw, setDraw] = useState(null);
-    const [surveyLinesMap, setSurveyLinesMap] = useState(new Map());
+    const [surveyLinesMap] = useState(new Map());
 
     useEffect(() => {
         // Initialize the map only if it hasn't been created yet
@@ -211,4 +211,15 @@ function dividePolygonIntoSurveyLines(polygon, lineSpacing) {
 
     return surveyLines;
 }
+
+function linesToPoints(lines) {
+    const points = [];
+    lines.forEach(line => {
+        if (line.geometry && Array.isArray(line.geometry.coordinates)) {
+            points.push(...line.geometry.coordinates);
+        }
+    });
+    return points;
+}
+
 export default TrimbleMapComponent;
