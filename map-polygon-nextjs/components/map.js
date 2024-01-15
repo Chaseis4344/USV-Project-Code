@@ -46,16 +46,27 @@ function TrimbleMapComponent() {
     useEffect(() => {
         // Set up event listeners if map and draw instances are available
         if (map && draw) {
-            const createHandler = (e) => {
+
+            let lineIdCounter = 0; // Initialize a counter for line IDs outside of the component
+            function createHandler(e) {
                 const shape = e.features[0];
                 if (shape.geometry.type === 'Polygon') {
                     const lines = dividePolygonIntoSurveyLines(shape, 0.0005);
-                    lines.forEach(line => {
-                        draw.add(line);
+                    const lineIds = lines.map(line => {
+                        // Assign a unique ID to the line using the lineIdCounter
+                        const lineWithId = {
+                            ...line, // Copy the existing line data
+                            id: lineIdCounter++ // Assign a unique ID
+                        };
+                        draw.add(lineWithId); // Add the line with its ID to the draw instance
+                        console.log('Created line:', JSON.stringify(lineWithId, null, 2)); // Log the line with its ID
+                        return lineWithId.id; // Return the new ID for storage
                     });
-                    surveyLinesMap.set(shape.id, lines.map(line => line.id));
+            
+                    // Store the line IDs in the surveyLinesMap using the shape's ID as the key
+                    surveyLinesMap.set(shape.id, lineIds);
                 }
-            };
+            }
 
             const deleteHandler = (e) => {
                 e.features.forEach(feature => {
@@ -69,12 +80,45 @@ function TrimbleMapComponent() {
                 });
             };
 
+            const updateHandler = (e) => {
+                e.features.forEach(feature => {
+                    if (feature.geometry.type === 'Polygon') {
+                        const oldLineIds = surveyLinesMap.get(feature.id);
+                        if (oldLineIds) {
+                            draw.delete(oldLineIds); // Delete old lines using their IDs
+                            surveyLinesMap.delete(feature.id); // Remove the old IDs from the map
+                        }
+            
+                        // Recalculate the new survey lines for the updated polygon
+                        const newLines = dividePolygonIntoSurveyLines(feature, 0.0005);
+                        // Add new lines with unique IDs and store the new IDs
+                        const newLineIds = newLines.map(line => {
+                            const lineWithId = {
+                                ...line, // Spread the original line object
+                                id: generateUUID() // Assign a UUID to the line
+                            };
+                            draw.add(lineWithId); // Add the line with its new UUID to the draw instance
+                            return lineWithId.id; // Return the UUID for storage
+                        });
+            
+                        // Update the surveyLinesMap with the new line UUIDs
+                        surveyLinesMap.set(feature.id, newLineIds);
+                    }
+                });
+            };
+
+            map.on('draw.delete', e => {
+                console.log('Deleted features:', e.features.map(f => f.id));
+              });
+
             map.on('draw.create', createHandler);
             map.on('draw.delete', deleteHandler);
+            map.on('draw.update', updateHandler);
 
             return () => {
                 map.off('draw.create', createHandler);
                 map.off('draw.delete', deleteHandler);
+                map.off('draw.update', updateHandler);
             };
         }
     }, [map, draw, surveyLinesMap]); // Dependencies on map, draw, and surveyLinesMap
@@ -121,6 +165,4 @@ function dividePolygonIntoSurveyLines(polygon, lineSpacing) {
 
     return surveyLines;
 }
-
-
 export default TrimbleMapComponent;
