@@ -48,7 +48,9 @@ function TrimbleMapComponent() {
         // Set up event listeners if map and draw instances are available
         if (map && draw) {
 
-            let lineIdCounter = 0; // Initialize a counter for line IDs outside of the component
+            //Line Ids need to start at 1 for their respective polygon otherwise they share an ID with the parent polygon
+            let lineIdCounter = 1; // Initialize a counter for line IDs outside of the component
+            
             function createHandler(e) {
                 const shape = e.features[0];
                 if (shape.geometry.type === 'Polygon') {
@@ -60,7 +62,8 @@ function TrimbleMapComponent() {
                             id: lineIdCounter++ // Assign a unique ID
                         };
                         draw.add(lineWithId); // Add the line with its ID to the draw instance
-                        console.log('Created line:', JSON.stringify(lineWithId, null, 2)); // Log the line with its ID
+                       // console.log('Line Id:' + lineWithId.id);
+                        //console.log('Created line:', JSON.stringify(lineWithId, null, 2)); // Log the line with its ID
                         return lineWithId.id; // Return the new ID for storage
                     });
             
@@ -80,7 +83,7 @@ function TrimbleMapComponent() {
                             // Check if the lines still exist after deletion attempt
                             const remainingFeatures = lineIds.map(id => draw.get(id));
                             const remainingFeaturesExist = remainingFeatures.some(feature => feature !== null);
-                            console.log('Do any deleted features remain?', remainingFeaturesExist);
+                           // console.log('Do any deleted features remain?', remainingFeaturesExist);
             
                             // Proceed to delete the IDs from the map only if they no longer exist
                             if (!remainingFeaturesExist) {
@@ -96,10 +99,11 @@ function TrimbleMapComponent() {
 
             const updateHandler = (e) => {
                 e.features.forEach(feature => {
-                    if (feature.geometry.type === 'Polygon') {
+                    if (feature.geometry.type === 'Polygon') {                        
+                        
                         const oldLineIds = surveyLinesMap.get(feature.id);
                         console.log('Old line IDs to delete:', oldLineIds);
-            
+
                         if (oldLineIds) {
                             const deletionResult = draw.delete(oldLineIds);
                             console.log(`Deletion result:`, deletionResult); // Log result of deletion
@@ -118,6 +122,8 @@ function TrimbleMapComponent() {
                         console.log('New line IDs:', newLineIds);
                         surveyLinesMap.set(feature.id, newLineIds);
                         console.log(`Updated surveyLinesMap for feature ID: ${feature.id}`, surveyLinesMap.get(feature.id));
+                    }else {
+                        console.error("Update of non-polygon detected");
                     }
                 });
             };
