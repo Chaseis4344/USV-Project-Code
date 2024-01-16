@@ -112,6 +112,7 @@ function TrimbleMapComponent() {
                         }
             
                         const newLines = dividePolygonIntoSurveyLines(feature, 0.0005);
+                        console.log("lines:" + newLines);
                         const newLineIds = newLines.map(line => {
                             const lineWithId = { ...line, id: lineIdCounter++ };
                             draw.add(lineWithId);
@@ -184,7 +185,10 @@ function dividePolygonIntoSurveyLines(polygon, lineSpacing) {
     const boundingBox = turf.bbox(polygon);
     const surveyLines = [];
     let currentLongitude = boundingBox[0];
+    const polygonLines = turf.polygonToLine(polygon);
 
+
+    console.log(JSON.stringify(polygonLines));
     while (currentLongitude <= boundingBox[2]) {
         const verticalLine = turf.lineString([
             [currentLongitude, boundingBox[1]],
@@ -198,11 +202,16 @@ function dividePolygonIntoSurveyLines(polygon, lineSpacing) {
         if (intersections.features.length) {
             // Sort intersections from south to north
             const sortedIntersections = intersections.features.sort((a, b) => a.geometry.coordinates[1] - b.geometry.coordinates[1]);
-
+            
             for (let i = 0; i < sortedIntersections.length - 1; i += 2) {
+               // console.log("Intersection:" + i + "\n \t"+ JSON.stringify(sortedIntersections[i]));
                 // Create a line segment for each pair of intersection points
                 const segment = turf.lineString([sortedIntersections[i].geometry.coordinates, sortedIntersections[i + 1].geometry.coordinates]);
-
+                
+               
+               
+                    
+               
                 // Check if the midpoint of the segment is within the polygon
                 const midpoint = turf.midpoint(sortedIntersections[i], sortedIntersections[i + 1]);
                 if (turf.booleanPointInPolygon(midpoint, polygon)) {
