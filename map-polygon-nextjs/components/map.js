@@ -49,18 +49,17 @@ function TrimbleMapComponent() {
         if (map && draw) {
 
             //Line Ids need to start at 1 for their respective polygon otherwise they share an ID with the parent polygon
-            let idCounter = 0; // Initialize a counter for line IDs outside of the component
+            let lineIdCounter = 1; // Initialize a counter for line IDs outside of the component
             
             function createHandler(e) {
                 const shape = e.features[0];
-                shape.id = idCounter++;
                 if (shape.geometry.type === 'Polygon') {
                     const lines = dividePolygonIntoSurveyLines(shape, 0.0005);
                     const lineIds = lines.map(line => {
                         // Assign a unique ID to the line using the lineIdCounter
                         const lineWithId = {
                             ...line, // Copy the existing line data
-                            id: idCounter++ // Assign a unique ID
+                            id: lineIdCounter++ // Assign a unique ID
                         };
                         draw.add(lineWithId); // Add the line with its ID to the draw instance
                        // console.log('Line Id:' + lineWithId.id);
