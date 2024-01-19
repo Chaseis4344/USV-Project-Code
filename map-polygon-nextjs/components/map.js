@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import * as turf from '@turf/turf';
 import DownloadButton from './DownloadButton';
+import { Libre_Barcode_128 } from 'next/font/google';
 
 function TrimbleMapComponent() {
     const [map, setMap] = useState(null);
@@ -53,7 +54,6 @@ function TrimbleMapComponent() {
             
             function createHandler(e) {
                 const shape = e.features[0];
-                shape.id= idCounter++;
                 if (shape.geometry.type === 'Polygon') {
                     const lines = dividePolygonIntoSurveyLines(shape, 0.0005);
                     const lineIds = lines.map(line => {
@@ -187,7 +187,8 @@ function dividePolygonIntoSurveyLines(polygon, lineSpacing) {
     const surveyLines = [];
     let currentLongitude = boundingBox[0];
     const polygonLines = turf.polygonToLine(polygon);
-
+    let top =0;
+    let lastIntersections = null;
 
     console.log(JSON.stringify(polygonLines));
     while (currentLongitude <= boundingBox[2]) {
@@ -196,32 +197,71 @@ function dividePolygonIntoSurveyLines(polygon, lineSpacing) {
             [currentLongitude, boundingBox[3]]
         ]);
 
+
+        
+        
+
         // Find intersection points between the vertical line and the polygon
         const intersections = turf.lineIntersect(verticalLine, polygon);
-
+       
+        
         // If there are intersections, process them
         if (intersections.features.length) {
             // Sort intersections from south to north
             const sortedIntersections = intersections.features.sort((a, b) => a.geometry.coordinates[1] - b.geometry.coordinates[1]);
-            
+
             for (let i = 0; i < sortedIntersections.length - 1; i += 2) {
                // console.log("Intersection:" + i + "\n \t"+ JSON.stringify(sortedIntersections[i]));
                 // Create a line segment for each pair of intersection points
                 const segment = turf.lineString([sortedIntersections[i].geometry.coordinates, sortedIntersections[i + 1].geometry.coordinates]);
-                
-               
-               
-                    
-               
+
                 // Check if the midpoint of the segment is within the polygon
                 const midpoint = turf.midpoint(sortedIntersections[i], sortedIntersections[i + 1]);
                 if (turf.booleanPointInPolygon(midpoint, polygon)) {
+                    
                     // If the midpoint is inside the polygon, the segment is valid
                     surveyLines.push(segment);
                 }
+                //Check that we get a next Line
+                //Cast a line forwards from the midpoint of the line
+                    const horizontalForwardsLine = turf.lineString([midpoint,turf.point(sortedIntersections[i].geometry.coordinates[0]+lineSpacing,sortedIntersections[i].geometry.coordinates[1])])
+                if(currentLongitude-lineSpacing>boundingBox[0])
+                {    
+                    
+                    if(top == 0)
+                    {
+
+                        //Get lineSlice of top portion and push it
+
+                        top = 1;
+                    }else{
+
+                          //Get lineSlice of bottom portion and push it
+                        top = 0;
+                    }
+                    
+                    
+                }else{
+                    const forwardIntersects =  turf.lineIntersect(horizontalForwardsLine,polygon);
+                    //If that runs into the side of the polygon, that means we need to turn around
+                    if(forwardIntersects.length)
+                    {
+                        //Connect Line to itself, this is already a line so we just end up turning around
+                        const lineTop =turf.point(sortedIntersections[i].geometry.coordinates);
+                        const lineBottom = turf.point(sortedIntersections[i + 1]);
+                        surveyLines.push( turf.lineSlice(lineTop,lineBottom,polygonLines) );
+                    }
+                }
+             
+                
             }
+
+            lastIntersections = sortedIntersections;
+           
         }
 
+
+          
         currentLongitude += lineSpacing;
     }
 
