@@ -115,7 +115,7 @@ function TrimbleMapComponent() {
                         const newLines = dividePolygonIntoSurveyLines(feature, 0.0005);
                         console.log("lines:" + newLines);
                         const newLineIds = newLines.map(line => {
-                            const lineWithId = { ...line, id: lineIdCounter++ };
+                            const lineWithId = { ...line, id: idCounter++ };
                             draw.add(lineWithId);
                             return lineWithId.id;
                         });
@@ -213,7 +213,7 @@ function dividePolygonIntoSurveyLines(polygon, lineSpacing) {
             for (let i = 0; i < sortedIntersections.length - 1; i += 2) {
                // console.log("Intersection:" + i + "\n \t"+ JSON.stringify(sortedIntersections[i]));
                 // Create a line segment for each pair of intersection points
-                const segment = turf.lineString([sortedIntersections[i].geometry.coordinates, sortedIntersections[i + 1].geometry.coordinates]);
+                const segment = turf.lineString([[sortedIntersections[i].geometry.coordinates[0],sortedIntersections[i].geometry.coordinates[1]], [sortedIntersections[i + 1].geometry.coordinates[0],sortedIntersections[i + 1].geometry.coordinates[1]]]);
 
                 // Check if the midpoint of the segment is within the polygon
                 const midpoint = turf.midpoint(sortedIntersections[i], sortedIntersections[i + 1]);
@@ -224,33 +224,31 @@ function dividePolygonIntoSurveyLines(polygon, lineSpacing) {
                 }
                 //Check that we get a next Line
                 //Cast a line forwards from the midpoint of the line
-                    const horizontalForwardsLine = turf.lineString([midpoint,turf.point(sortedIntersections[i].geometry.coordinates[0]+lineSpacing,sortedIntersections[i].geometry.coordinates[1])])
-                if(currentLongitude-lineSpacing>boundingBox[0])
+                   // const horizontalForwardsLine = turf.lineString([midpoint,turf.point(sortedIntersections[i].geometry.coordinates[0]+lineSpacing,sortedIntersections[i].geometry.coordinates[1])])
+                if(currentLongitude-lineSpacing>boundingBox[0]&&lastIntersections!=undefined)
                 {    
                     
                     if(top == 0)
                     {
-
-                        //Get lineSlice of top portion and push it
-
+                        if(sortedIntersections[i]!=undefined && sortedIntersections[i]!= undefined)
+                          {
+                            //Get lineSlice of top portion and push it
+                            const section = turf.lineSlice(sortedIntersections[i].geometry.coordinates, lastIntersections[i].geometry.coordinates,polygonLines);
+                             surveyLines.push(section);
+                          }
                         top = 1;
                     }else{
 
                           //Get lineSlice of bottom portion and push it
-                        top = 0;
+                          if(sortedIntersections[i+1]!=undefined && sortedIntersections[i+1]!= undefined)
+                          {
+                            const section = turf.lineSlice(sortedIntersections[i+1].geometry.coordinates, lastIntersections[i+1].geometry.coordinates,polygonLines);  
+                            surveyLines.push(section);
+                          }
+                          top = 0;
                     }
                     
                     
-                }else{
-                    const forwardIntersects =  turf.lineIntersect(horizontalForwardsLine,polygon);
-                    //If that runs into the side of the polygon, that means we need to turn around
-                    if(forwardIntersects.length)
-                    {
-                        //Connect Line to itself, this is already a line so we just end up turning around
-                        const lineTop =turf.point(sortedIntersections[i].geometry.coordinates);
-                        const lineBottom = turf.point(sortedIntersections[i + 1]);
-                        surveyLines.push( turf.lineSlice(lineTop,lineBottom,polygonLines) );
-                    }
                 }
              
                 
