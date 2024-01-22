@@ -211,7 +211,34 @@ function dividePolygonIntoSurveyLines(polygon, lineSpacing) {
             const sortedIntersections = intersections.features.sort((a, b) => a.geometry.coordinates[1] - b.geometry.coordinates[1]);
 
             for (let i = 0; i < sortedIntersections.length - 1; i += 2) {
-               // console.log("Intersection:" + i + "\n \t"+ JSON.stringify(sortedIntersections[i]));
+              
+                //Check that we get a next Line
+                //Cast a line forwards from the midpoint of the line
+                   // const horizontalForwardsLine = turf.lineString([midpoint,turf.point(sortedIntersections[i].geometry.coordinates[0]+lineSpacing,sortedIntersections[i].geometry.coordinates[1])])
+                if(currentLongitude-lineSpacing>boundingBox[0]&&lastIntersections!=undefined)
+                {    
+                    
+                    if(top == 0)
+                    {
+                        if(sortedIntersections[i]!=undefined && lastIntersections[i]!= undefined)
+                          {
+                            //Get lineSlice of top portion and push it
+                            const section = turf.lineSlice(sortedIntersections[i].geometry.coordinates, lastIntersections[i].geometry.coordinates,polygonLines);
+                             surveyLines.push(section);
+                          }
+                        top = 1;
+                    }else{
+
+                          //Get lineSlice of bottom portion and push it
+                          if(sortedIntersections[i+1]!=undefined && lastIntersections[i+1]!= undefined)
+                          {
+                            const section = turf.lineSlice(sortedIntersections[i+1].geometry.coordinates, lastIntersections[i+1].geometry.coordinates,polygonLines);  
+                            surveyLines.push(section);
+                          }
+                          top = 0;
+                    }
+
+                     // console.log("Intersection:" + i + "\n \t"+ JSON.stringify(sortedIntersections[i]));
                 // Create a line segment for each pair of intersection points
                 const segment = turf.lineString([[sortedIntersections[i].geometry.coordinates[0],sortedIntersections[i].geometry.coordinates[1]], [sortedIntersections[i + 1].geometry.coordinates[0],sortedIntersections[i + 1].geometry.coordinates[1]]]);
 
@@ -222,31 +249,6 @@ function dividePolygonIntoSurveyLines(polygon, lineSpacing) {
                     // If the midpoint is inside the polygon, the segment is valid
                     surveyLines.push(segment);
                 }
-                //Check that we get a next Line
-                //Cast a line forwards from the midpoint of the line
-                   // const horizontalForwardsLine = turf.lineString([midpoint,turf.point(sortedIntersections[i].geometry.coordinates[0]+lineSpacing,sortedIntersections[i].geometry.coordinates[1])])
-                if(currentLongitude-lineSpacing>boundingBox[0]&&lastIntersections!=undefined)
-                {    
-                    
-                    if(top == 0)
-                    {
-                        if(sortedIntersections[i]!=undefined && sortedIntersections[i]!= undefined)
-                          {
-                            //Get lineSlice of top portion and push it
-                            const section = turf.lineSlice(sortedIntersections[i].geometry.coordinates, lastIntersections[i].geometry.coordinates,polygonLines);
-                             surveyLines.push(section);
-                          }
-                        top = 1;
-                    }else{
-
-                          //Get lineSlice of bottom portion and push it
-                          if(sortedIntersections[i+1]!=undefined && sortedIntersections[i+1]!= undefined)
-                          {
-                            const section = turf.lineSlice(sortedIntersections[i+1].geometry.coordinates, lastIntersections[i+1].geometry.coordinates,polygonLines);  
-                            surveyLines.push(section);
-                          }
-                          top = 0;
-                    }
                     
                     
                 }
