@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import * as turf from '@turf/turf';
 import DownloadButton from './DownloadButton';
-import { Libre_Barcode_128 } from 'next/font/google';
 
 function TrimbleMapComponent() {
     const [map, setMap] = useState(null);
