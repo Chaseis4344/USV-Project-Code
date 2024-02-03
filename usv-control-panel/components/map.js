@@ -47,15 +47,21 @@ function TrimbleMapComponent() {
             const handlePolygonComplete = (e) => {
                 const shape = e.features[0];
                 if (shape.geometry.type === 'Polygon') {
-                    // Call the function to process the polygon data when a polygon is completed
                     processPolygonData();
                 }
             };
+
+            const handlePolygonUpdate = (e) => {
+                processPolygonData();
+            };
+
     
             map.on('draw.create', handlePolygonComplete);
+            map.on('draw.update', handlePolygonUpdate);
     
             return () => {
                 map.off('draw.create', handlePolygonComplete);
+                map.off('draw.update', handlePolygonUpdate);
             };
         }
     }, [map, draw]);
