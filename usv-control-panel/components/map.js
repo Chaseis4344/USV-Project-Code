@@ -11,7 +11,7 @@ function TrimbleMapComponent() {
     useEffect(() => {
         if (!map) {
             import('@trimblemaps/trimblemaps-js').then(TrimbleMaps => {
-                TrimbleMaps.setAPIKey("A0BE83B6F0F79743934A805868522888");
+                TrimbleMaps.setAPIKey("025B39D0565F4A41827AC1BCBBFDA111");
 
                 const newMap = new TrimbleMaps.Map({
                     container: "myMap",
