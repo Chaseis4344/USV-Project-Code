@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import * as turf from '@turf/turf';
 import DownloadButton from './DownloadButton';
+import dataTable from './dataTable';
 
 function TrimbleMapComponent() {
     const [map, setMap] = useState(null);
@@ -13,7 +14,7 @@ function TrimbleMapComponent() {
         // Initialize the map only if it hasn't been created yet
         if (!map) {
             import('@trimblemaps/trimblemaps-js').then(TrimbleMaps => {
-                TrimbleMaps.setAPIKey("025B39D0565F4A41827AC1BCBBFDA111");
+                TrimbleMaps.setAPIKey("E006198D3D2D034197622ADE3E8DF111");
 
                 const newMap = new TrimbleMaps.Map({
                     container: "myMap",
@@ -176,6 +177,7 @@ function TrimbleMapComponent() {
             <div id="myMap" style={{ height: '900px', width: '1440px' }}></div>
             {/* Use the DownloadButton component and pass the getPolygonData function as a prop */}
             <DownloadButton getPolygonData={getPolygonData} />
+            <dataTable getPolygonData={getPolygonData}/>
         </div>
     );
 }
