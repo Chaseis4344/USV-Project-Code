@@ -48,7 +48,8 @@ function TrimbleMapComponent() {
                       controls: {
                         polygon: true,
                         trash: true,
-                        save: true
+                        save: true,
+                        upload: true
                       }
                     });
                     newMap.addControl(newDraw, "top-left");

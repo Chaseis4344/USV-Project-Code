@@ -1230,6 +1230,16 @@
                                                         console.log("Save button clicked");
                                                     },
                                                 })),
+                                                n.upload &&
+                                                (e.upload = v("upload", {
+                                                    container: r,
+                                                    className: 'usv-draw_upload',
+                                                    title: "Upload",
+                                                    onActivate: function () {
+                                                        // Add your save functionality here
+                                                        console.log("Upload button clicked");
+                                                    },
+                                                })),
                                                 n.combine_features &&
                                                 (e.combine_features = v("combineFeatures", {
                                                     container: r,
