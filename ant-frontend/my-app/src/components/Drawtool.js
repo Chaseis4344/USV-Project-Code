@@ -1,3 +1,4 @@
+/* eslint-disable */
 !(function (t, e) {
     "object" == typeof exports && "undefined" != typeof module
         ? (module.exports = e())
@@ -1229,6 +1230,9 @@
                                                         // Add your save functionality here
                                                         console.log("Save button clicked");
                                                     },
+                                                    onDeactivate: function () {
+                                                        return 1;
+                                                    },
                                                 })),
                                                 n.upload &&
                                                 (e.upload = v("upload", {
@@ -1236,8 +1240,14 @@
                                                     className: 'usv-draw_upload',
                                                     title: "Upload",
                                                     onActivate: function () {
-                                                        // Add your save functionality here
-                                                        console.log("Upload button clicked");
+                                                        console.log("Attempting to dispatch openUploadDialog event");
+                                                        const event = new CustomEvent('openUploadDialog');
+                                                        window.dispatchEvent(event);
+                                                    },
+                                                    onDeactivate: function () {
+                                                        console.log("Attempting to dispatch openUploadDialog event");
+                                                        const event = new CustomEvent('openUploadDialog');
+                                                        window.dispatchEvent(event);
                                                     },
                                                 })),
                                                 n.combine_features &&
@@ -4080,3 +4090,4 @@
     }
     return (Ue.modes = de), Ue;
 });
+export default TrimbleMapsControl;

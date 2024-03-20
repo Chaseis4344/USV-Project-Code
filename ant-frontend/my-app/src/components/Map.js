@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import TrimbleMapsControl from './Drawtool';
 /* global TrimbleMapsControl */
 
 function TrimbleMapComponent() {
@@ -44,16 +45,16 @@ function TrimbleMapComponent() {
 
                 if (typeof TrimbleMapsControl !== 'undefined') {
                     const newDraw = new TrimbleMapsControl.Draw({
-                      displayControlsDefault: false,
-                      controls: {
-                        polygon: true,
-                        trash: true,
-                        save: true,
-                        upload: true
-                      }
-                    });
-                    newMap.addControl(newDraw, "top-left");
-                    setDraw(newDraw);
+                        displayControlsDefault: false,
+                        controls: {
+                          polygon: true,
+                          trash: true,
+                          save: true,
+                          upload: true
+                        }
+                      });
+                      newMap.addControl(newDraw, "top-left");
+                      setDraw(newDraw);
                 }
             }).catch(error => console.error("Failed to load TrimbleMaps", error));
         }
