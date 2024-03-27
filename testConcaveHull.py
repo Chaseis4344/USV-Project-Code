@@ -44,8 +44,8 @@ def plot_concave_hull(points, concave_hull):
     plt.show()
 
 # Example usage
-input_file = 'Measu_Dredge_data.txt'
-tolerance = 1.0  # Adjust the tolerance value to control the level of simplification
+input_file = 'TestBlob1.txt'
+tolerance = .5  # Adjust the tolerance value to control the level of simplification
 
 points = parse_input_file(input_file)
 unique_points = remove_duplicates(points)
