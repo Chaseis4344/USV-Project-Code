@@ -4,7 +4,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.animation import FuncAnimation
 
 # Load the data
-with open('Measu_Dredge_data.txt', 'r') as file:
+with open('Acquisition_EVENT_20240328.txt', 'r') as file:
     lines = file.readlines()
 
 # Parse the data
@@ -45,7 +45,7 @@ def update(frame):
 
 # Create animation
 ani = FuncAnimation(fig, update, frames=range(0, 360, 2), blit=False, interval=50)
-ani.save('gps_data_animation.gif', writer='ffmpeg')
+ani.save('gps_data_animation2.gif', writer='ffmpeg')
 
 # Show plot
 plt.show()
