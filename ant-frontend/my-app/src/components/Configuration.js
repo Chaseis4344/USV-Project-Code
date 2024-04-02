@@ -64,7 +64,7 @@ const Configuration = () => {
                                 defaultValue={30}
                             />
                         </Form.Item>
-                        <Form.Item>
+                        <Form.Item wrapperCol={{ span: 24, offset: 20 }}>
                             <Button type="primary" htmlType="submit">
                                 Save Configuration
                             </Button>
