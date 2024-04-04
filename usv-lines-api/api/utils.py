@@ -9,8 +9,11 @@ import logging
 
 
 DEFAULT_CONFIG = {
-    'api_key': '',
-    'some_setting': 'default_value',
+  'apiKey': 'xxxxxxxxxxxxxx',
+  'someSetting': 'light',
+  'rememberMe': False,
+  'typeOfLines': 'enabled',
+  'sliderExample': 30,
 }
 
 CONFIG_FILE = 'config.json'
