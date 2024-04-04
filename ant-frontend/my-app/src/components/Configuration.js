@@ -24,7 +24,7 @@ const configIO = useContext(ConfigContext);
                 <Content style={{ margin: '0px 0px 0', background: '#fff', padding: 24 }}>
                     <Title level={2}>Configuration</Title>
                     <Paragraph>Customize the settings and preferences for your application.</Paragraph>
-                    <Form onFinish={onFinish} layout="vertical" initialValues={config}>
+                    <Form onFinish={onFinish} layout="vertical" initialValues={configIO.getConfig()}>
                         <Form.Item
                             name="apiKey"
                             label="API Key"
