@@ -1,22 +1,15 @@
-import {React, useContext} from 'react';
+import React from 'react';
 import { Layout, Typography, Form, Input, Select, Button, Checkbox, Slider } from 'antd';
 import Sidebar from './Sidebar';
 import config from '../config';
-import { ConfigContext } from '../context/ConfigContext';
 
 const { Content, Sider } = Layout;
 const { Title, Paragraph } = Typography;
 
-
 const Configuration = () => {
-const configIO = useContext(ConfigContext);
     const onFinish = (values) => {
         console.log('Form values:', values);
         // Handle form submission logic here
-        //How does this get to ConfigContext.js?
-       
-       configIO.setConfig(values);
-        
     };
 
     return (
@@ -28,7 +21,7 @@ const configIO = useContext(ConfigContext);
                 <Content style={{ margin: '0px 0px 0', background: '#fff', padding: 24 }}>
                     <Title level={2}>Configuration</Title>
                     <Paragraph>Customize the settings and preferences for your application.</Paragraph>
-                    <Form onFinish={onFinish} layout="vertical" initialValues={configIO.getConfig()}>
+                    <Form onFinish={onFinish} layout="vertical">
                         <Form.Item
                             name="apiKey"
                             label="API Key"
