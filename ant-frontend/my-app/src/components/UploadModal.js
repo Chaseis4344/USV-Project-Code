@@ -46,7 +46,7 @@ const UploadModal = () => {
   return (
     <Modal
       title="Upload File"
-      visible={isModalVisible}
+      open={isModalVisible}
       onCancel={() => setIsModalVisible(false)}
       footer={[
         <Button key="back" onClick={() => setIsModalVisible(false)}>

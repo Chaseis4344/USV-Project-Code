@@ -30,7 +30,7 @@ const configIO = useContext(ConfigContext);
                             name="apiKey"
                             label="API Key"
                             rules={[{ required: true, message: 'Please enter the API key' }]}
-                            initialValue={config.apiKey}
+                           // initialValue={config.apiKey}
                         >
                             <Input />
                         </Form.Item>
@@ -65,7 +65,7 @@ const configIO = useContext(ConfigContext);
                             label="Slider Example"
                         >
                             <Slider
-                                defaultValue={30}
+                                initialValue={30}
                             />
                         </Form.Item>
                         <Form.Item wrapperCol={{ span: 24, offset: 20 }}>

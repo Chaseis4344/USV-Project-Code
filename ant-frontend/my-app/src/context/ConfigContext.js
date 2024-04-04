@@ -13,6 +13,7 @@ export const ConfigProvider = ({ children }) => {
    
    try{
     const response = await axios.post(/*URL for resource goes here*/"", config);
+    return response.data;
     }
    catch(ex){
     console.error("Config Error:"+ ex);
