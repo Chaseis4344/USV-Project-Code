@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { Layout, Typography, Form, Input, Select, Button, Checkbox, Slider } from 'antd';
 import Sidebar from './Sidebar';
-import config from '../config.json';
 
 import { ConfigContext } from '../context/ConfigContext';
 
