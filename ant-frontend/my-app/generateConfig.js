@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-if (new File("src/config.json").isFile()) {
+if (fs.existsSync('src/config.josn')) {
     return;
 } else {
     const apiKey = 'YOUR_API_KEY';
