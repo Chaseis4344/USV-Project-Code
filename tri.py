@@ -1,10 +1,9 @@
 import numpy as np
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, MultiPolygon
 from shapely.ops import triangulate
 import matplotlib.pyplot as plt
 import networkx as nx
 import networkx.algorithms.approximation as approx
-import imageio
 
 # Define the polygon vertices
 vertices = np.array([
@@ -22,26 +21,56 @@ triangles = triangulate(polygon)
 # Extract the convex sub-regions inside the polygon
 convex_sub_regions = [tri for tri in triangles if polygon.contains(tri)]
 
-# Visualize the original polygon
+# Visualize the original polygon and the convex sub-regions before merging
 fig, ax = plt.subplots(figsize=(8, 6))
 x, y = polygon.exterior.xy
 ax.plot(x, y, color='black')
 
-# Visualize the convex sub-regions
 for region in convex_sub_regions:
+    x, y = region.exterior.xy
+    ax.fill(x, y, alpha=0.4, fc='b', ec='b')
+
+ax.set_aspect('equal')
+ax.set_title('Polygon Decomposition into Convex Sub-Regions (Before Merging)')
+plt.show()
+
+# Merge neighboring triangles to create larger convex sub-regions
+merged_regions = []
+while convex_sub_regions:
+    current_region = convex_sub_regions.pop(0)
+    merged = True
+    while merged:
+        merged = False
+        for i, region in enumerate(convex_sub_regions):
+            if current_region.intersects(region):
+                merged_region = current_region.union(region)
+                if merged_region.is_valid and merged_region.convex_hull.equals(merged_region):
+                    current_region = merged_region
+                    convex_sub_regions.pop(i)
+                    merged = True
+                    break
+    merged_regions.append(current_region)
+
+# Visualize the original polygon and the merged convex sub-regions
+fig, ax = plt.subplots(figsize=(8, 6))
+x, y = polygon.exterior.xy
+ax.plot(x, y, color='black')
+
+for region in merged_regions:
     x, y = region.exterior.xy
     ax.fill(x, y, alpha=0.4, fc='r', ec='r')
 
 ax.set_aspect('equal')
-ax.set_title('Polygon Decomposition into Convex Sub-Regions')
+ax.set_title('Polygon Decomposition into Merged Convex Sub-Regions')
 plt.show()
 
-nodes = [i for i in range(len(convex_sub_regions))]
+
+nodes = [i for i in range(len(merged_regions))]
 
 # Create a list of edges
 edges = []
-for i, region1 in enumerate(convex_sub_regions):
-    for j, region2 in enumerate(convex_sub_regions):
+for i, region1 in enumerate(merged_regions):
+    for j, region2 in enumerate(merged_regions):
         if i != j and region1.touches(region2):
             edges.append((i, j))
 
@@ -52,8 +81,8 @@ G.add_edges_from(edges)
 
 # Add edge weights based on the distance between centroids
 for u, v in G.edges:
-    centroid_u = convex_sub_regions[u].centroid
-    centroid_v = convex_sub_regions[v].centroid
+    centroid_u = merged_regions[u].centroid
+    centroid_v = merged_regions[v].centroid
     distance = centroid_u.distance(centroid_v)
     G.edges[u, v]['weight'] = distance
 
@@ -74,11 +103,11 @@ start_index = tour.index(start_node)
 tour = tour[start_index:] + tour[:start_index]
 
 for i, node in enumerate(tour):
-    region = convex_sub_regions[node]
+    region = merged_regions[node]
     x, y = region.exterior.xy
     ax.fill(x, y, alpha=0.4, fc='r', ec='r')
     ax.text(region.centroid.x, region.centroid.y, str(i), fontsize=10, ha='center', va='center')
 
 ax.set_aspect('equal')
-ax.set_title('Polygon Decomposition into Convex Sub-Regions (TSP Tour)')
+ax.set_title('Polygon Decomposition into Merged Convex Sub-Regions (TSP Tour)')
 plt.show()
