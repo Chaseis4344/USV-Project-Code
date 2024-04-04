@@ -12,13 +12,14 @@ def create_app():
     app.logger.setLevel(logging.DEBUG)
 
     # Load the configuration
-    app.config.from_mapping(load_config())
+    loaded_config = load_config()
+    app.config.from_mapping(loaded_config)
 
     # Register the blueprint
     app.register_blueprint(api_blueprint)
 
     # Save the default configuration if the file doesn't exist
-    if not app.config:
+    if loaded_config == DEFAULT_CONFIG:
         save_config(DEFAULT_CONFIG)
 
     return app

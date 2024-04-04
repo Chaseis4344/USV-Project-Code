@@ -11,20 +11,23 @@ import logging
 DEFAULT_CONFIG = {
     'api_key': '',
     'some_setting': 'default_value',
-    # Add more default configuration values as needed
 }
 
 CONFIG_FILE = 'config.json'
 
 def load_config():
-    if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, 'r') as file:
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(project_dir, CONFIG_FILE)
+    if os.path.exists(config_path):
+        with open(config_path, 'r') as file:
             return json.load(file)
     else:
         return DEFAULT_CONFIG
 
 def save_config(config):
-    with open(CONFIG_FILE, 'w') as file:
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(project_dir, CONFIG_FILE)
+    with open(config_path, 'w') as file:
         json.dump(config, file, indent=2)
 
 
