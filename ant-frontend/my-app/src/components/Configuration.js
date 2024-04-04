@@ -12,7 +12,7 @@ const Configuration = () => {
 const configIO = useContext(ConfigContext);
     const onFinish = (values) => {
         console.log('Form values:', values);
-        configIO.setConfig(values);// Will be updated when we can
+        configIO.setConfig(values);
     };
 
     return (
