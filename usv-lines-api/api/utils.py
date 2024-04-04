@@ -1,10 +1,31 @@
 import matplotlib
-
+import json
+import os
 matplotlib.use("Agg")  # Set the Matplotlib backend to 'Agg'
 import matplotlib.pyplot as plt
 from shapely.geometry import Polygon, LineString, Point
 import numpy as np
 import logging
+
+
+DEFAULT_CONFIG = {
+    'api_key': '',
+    'some_setting': 'default_value',
+    # Add more default configuration values as needed
+}
+
+CONFIG_FILE = 'config.json'
+
+def load_config():
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, 'r') as file:
+            return json.load(file)
+    else:
+        return DEFAULT_CONFIG
+
+def save_config(config):
+    with open(CONFIG_FILE, 'w') as file:
+        json.dump(config, file, indent=2)
 
 
 def is_convex_polygon(poly):
