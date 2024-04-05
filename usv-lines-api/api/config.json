@@ -3,5 +3,9 @@
   "someSetting": "light",
   "rememberMe": true,
   "typeOfLines": "enabled",
-  "sliderExample": 50
+  "sliderExample": 50,
+  "boatIP": "vzxv",
+  "boatGPSPort": "vxzzvacacszx ",
+  "boatDataPort": "asvdafgdsd",
+  "remoteDataStashIP": "sfagdshfdjfghj"
 }
