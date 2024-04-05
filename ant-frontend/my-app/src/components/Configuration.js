@@ -37,6 +37,37 @@ const Configuration = () => {
               <Input />
             </Form.Item>
             <Form.Item
+                            name="boatIP"
+                            label="USV IP"
+                            rules ={[{required: true, message: 'Please provide an IP for the boat'}]}
+                        >
+
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="boatGPSPort"
+                            label="Incoming USV GPS Port"
+                            rules ={[{required: true, message: 'Please provide an port to request GPS Data'}]}
+                        >
+
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="boatDataPort"
+                            label="Incoming USV Sonar Port"
+                            rules ={[{required: true, message: 'Please provide an port to request GPS Data'}]}
+                        >
+
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="remoteDataStashIP"
+                            label="Remote Data Endpoint IP"
+                            rules ={[{required: true, message: 'Please provide an IP to send unproccessed sonar data'}]}
+                        >
+                            <Input/>
+                        </Form.Item>
+            <Form.Item
               name="someSetting"
               label="Some Setting"
               rules={[{ required: true, message: 'Please select a setting' }]}
