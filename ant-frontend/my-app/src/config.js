@@ -1,4 +1,7 @@
+//Backend API URL
 export const API_URL = 'http://127.0.0.1:5000';
+
+//Tool tip messages
 export const APIKeyDesc = "The Application Programming Interface (API) key serves as an authenticator for the service.";
 export const USVIPDesc = "The Unmanned Surface Vessel IP Address allows the system to communicate with the boat";
 export const InUSVGPSDesc = "This is where the USV's GPS port is saved for navigation";
