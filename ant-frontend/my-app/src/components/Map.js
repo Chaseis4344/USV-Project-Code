@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import TrimbleMapsControl from './Drawtool';
 import { API_URL } from '../config';
-import { API_URL } from '../config';
 /* global TrimbleMapsControl */
 
 function TrimbleMapComponent() {
