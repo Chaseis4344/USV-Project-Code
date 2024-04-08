@@ -6,6 +6,17 @@ import { ConfigContext } from '../context/ConfigContext';
 const { Content, Sider } = Layout;
 const { Title, Paragraph } = Typography;
 
+
+const APIKeyDesc = "The Application Programming Interface (API) key serves as an authenticator for the service.";
+const USVIPDesc = "The Unmanned Surface Vessel IP Address allows the system to communicate with the boat";
+const InUSVGPSDesc = "This is where the USV's GPS port is saved for navigation";
+const InUSVSonDesc = "This is where the USV's Sonar port is saved for underwater survellaince";
+const RDEipDesc = "Remote Data Endpoint IP is saved here";
+const someSettingdesc = "Never gonna give you up\nNever gonna let you down\nNever gonna run around and desert you\nNever gonna make you cry\nNever gonna say goodbye\nNever gonna tell a lie and hurt you";
+const someDrawingwayDesc = "This is the way we draw the things IDK how yet..."
+const sliderEGDesc  = "do we need this tooltip here?";
+
+
 const Configuration = () => {
   const { config, updateConfig } = useContext(ConfigContext);
   const [form] = Form.useForm();
@@ -32,13 +43,51 @@ const Configuration = () => {
             <Form.Item
               name="apiKey"
               label="API Key"
+              tooltip={APIKeyDesc}
               rules={[{ required: true, message: 'Please enter the API key' }]}
+              
             >
               <Input />
             </Form.Item>
             <Form.Item
+                            name="boatIP"
+                            label="USV IP"
+                            tooltip={USVIPDesc}
+                            rules ={[{required: true, message: 'Please provide an IP for the boat'}]}
+                        >
+
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="boatGPSPort"
+                            label="Incoming USV GPS Port"
+                            tooltip={InUSVGPSDesc}
+                            rules ={[{required: true, message: 'Please provide an port to request GPS Data'}]}
+                        >
+
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="boatDataPort"
+                            label="Incoming USV Sonar Port"
+                            tooltip={InUSVSonDesc}
+                            rules ={[{required: true, message: 'Please provide an port to request GPS Data'}]}
+                        >
+
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            name="remoteDataStashIP"
+                            label="Remote Data Endpoint IP"
+                            tooltip={RDEipDesc}
+                            rules ={[{required: true, message: 'Please provide an IP to send unproccessed sonar data'}]}
+                        >
+                            <Input/>
+                        </Form.Item>
+            <Form.Item
               name="someSetting"
               label="Some Setting"
+              tooltip={someSettingdesc}
               rules={[{ required: true, message: 'Please select a setting' }]}
             >
               <Select>
@@ -52,6 +101,7 @@ const Configuration = () => {
             <Form.Item
               name="typeOfLines"
               label="Some Way We Draw Lines"
+              tooltip={someDrawingwayDesc}
               rules={[{ required: true, message: 'Please select an option' }]}
             >
               <Select>
@@ -59,7 +109,7 @@ const Configuration = () => {
                 <Select.Option value="disabled">Disabled</Select.Option>
               </Select>
             </Form.Item>
-            <Form.Item name="sliderExample" label="Slider Example">
+            <Form.Item name="sliderExample" label="Slider Example" tooltip={sliderEGDesc}>
               <Slider />
             </Form.Item>
             <Form.Item wrapperCol={{ span: 24, offset: 20 }}>
