@@ -1,25 +1,32 @@
 from flask import Blueprint, request, jsonify, current_app
-from .utils import process_polygon, load_config, save_config
+from .utils import load_config, save_config, triangulate_and_merge
 import logging
 
 api_blueprint = Blueprint('api', __name__)
 
 @api_blueprint.route('/api/process-polygon', methods=['POST'])
-def process_polygon_route():
-    data = request.json
-    polygon_data = data.get('polygonData')
-    
-    if not polygon_data:
-        current_app.logger.error('No polygon data provided')
-        return jsonify({'error': 'No polygon data provided'}), 400
+def triangulate_polygon():
+    try:
+        data = request.get_json()
+        print(f"Received data: {data}")
 
-    # Use logging module to check the log level
-    if current_app.logger.isEnabledFor(logging.DEBUG):
-        current_app.logger.debug(f'Processing polygon data: {polygon_data}')
+        if not data or not isinstance(data, dict) or 'polygonData' not in data:
+            return jsonify({'status': 'error', 'message': 'Invalid JSON data'})
 
-    processed_data = process_polygon(polygon_data)
-    current_app.logger.info('Successfully processed polygon data')
-    return jsonify(processed_data)
+        polygon_data = data['polygonData']
+        if not polygon_data or not isinstance(polygon_data, list) or len(polygon_data) == 0:
+            return jsonify({'status': 'error', 'message': 'Missing or invalid polygon data'})
+
+        polygon_coords = polygon_data[0].get('geometry', {}).get('coordinates', [])
+        if not polygon_coords or len(polygon_coords) == 0:
+            return jsonify({'status': 'error', 'message': 'Missing or invalid polygon coordinates'})
+
+        triangulate_and_merge(polygon_coords[0])
+        return jsonify({'status': 'success'})
+    except Exception as e:
+        import traceback
+        error_message = f"An error occurred: {str(e)}\n{traceback.format_exc()}"
+        return jsonify({'status': 'error', 'message': error_message})
 
 @api_blueprint.route('/api/config', methods=['GET'])
 def get_config():
@@ -33,3 +40,5 @@ def update_config():
     config.update(data)
     save_config(config)
     return jsonify({'message': 'Configuration updated successfully'})
+
+

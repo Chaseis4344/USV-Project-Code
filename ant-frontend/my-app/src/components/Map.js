@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import TrimbleMapsControl from './Drawtool';
+import { API_URL } from '../config';
 /* global TrimbleMapsControl */
 
 function TrimbleMapComponent() {
@@ -12,12 +13,9 @@ function TrimbleMapComponent() {
         const polygonData = draw.getAll().features.filter(feature => feature.geometry.type === 'Polygon');
         if (polygonData.length > 0) {
             try {
-                // Update the URL to point to your local Flask server
-                const response = await axios.post('http://127.0.0.1:5000/api/process-polygon', { polygonData });
-
-                // Assuming 'drawSurveyLines' is a function that you will define to handle the response
-                // and draw the survey lines on the map
-                // drawSurveyLines(response.data);
+                console.log('Sending polygon data to server:', polygonData);
+                const response = await axios.post(`${API_URL}/api/process-polygon`, { polygonData });
+                console.log('Server response:', response.data);
 
             } catch (error) {
                 console.error('Error sending polygon data to server:', error);
