@@ -37,37 +37,50 @@ def save_config(config):
 def triangulate_and_merge(polygon_data):
     vertices = np.array(polygon_data)
     polygon = Polygon(vertices)
-
     triangles = triangulate(polygon)
-
     convex_sub_regions = [tri for tri in triangles if polygon.contains(tri)]
-
+    
     merged_regions = []
+    remaining_triangles = convex_sub_regions.copy()
+    
     while convex_sub_regions:
         current_region = convex_sub_regions.pop(0)
         merged = True
+        
         while merged:
             merged = False
+            
             for i, region in enumerate(convex_sub_regions):
                 if current_region.intersects(region):
                     merged_region = current_region.union(region)
                     if merged_region.is_valid and merged_region.convex_hull.equals(merged_region):
                         current_region = merged_region
                         convex_sub_regions.pop(i)
+                        remaining_triangles.remove(region)
                         merged = True
                         break
+        
         merged_regions.append(current_region)
-
+    
+    # Add the remaining triangles to the merged regions if they are not already part of the merged regions
+    for triangle in remaining_triangles:
+        if not any(triangle.within(region) for region in merged_regions):
+            merged_regions.append(triangle)
+    
     # Visualize the original polygon and the merged convex sub-regions
     fig, ax = plt.subplots(figsize=(8, 6))
     x, y = polygon.exterior.xy
     ax.plot(x, y, color='black')
+    
     for region in merged_regions:
         x, y = region.exterior.xy
         ax.fill(x, y, alpha=0.4, fc='r', ec='r')
+    
     ax.set_aspect('equal')
     ax.set_title('Polygon Decomposition into Merged Convex Sub-Regions')
     plt.savefig('triangulation_result.png')
+    
+    return merged_regions
 
 
 
