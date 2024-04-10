@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 parry2d = "*"
+delaunator = "*"
 
 [[bin]]
 name = "hertel"
