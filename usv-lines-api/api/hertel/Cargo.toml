@@ -8,7 +8,10 @@ edition = "2021"
 [dependencies]
 parry2d = "*"
 delaunator = "*"
+pyo3 = {version = "*", features = ["extension-module"]}
 
-[[bin]]
+
+[lib]
 name = "hertel"
 path = "src/lib.rs"
+crate-type = ["cdylib"]

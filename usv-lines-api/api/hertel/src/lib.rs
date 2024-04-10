@@ -1,21 +1,18 @@
 use delaunator::{Point as DelaunatorPoint, triangulate};
 use parry2d::math::Point;
 use parry2d::transformation::hertel_mehlhorn;
+use pyo3::prelude::*;
 
-fn main() {
-    let vertices = vec![
-        Point::new(2.0f32, 2.0f32),   // 0
-        Point::new(2.0f32, -2.0f32),  // 1
-        Point::new(4.0f32, -2.0f32),  // 2
-        Point::new(4.0f32, 4.0f32),   // 3
-        Point::new(-4.0f32, 4.0f32),  // 4
-        Point::new(-4.0f32, -2.0f32), // 5
-        Point::new(-2.0f32, -2.0f32), // 6
-        Point::new(-2.0f32, 2.0f32),  // 7
-    ];
+#[pyfunction]
+fn convex_decomposition(vertices: Vec<(f32, f32)>) -> PyResult<Vec<Vec<(f32, f32)>>> {
+    // Convert Python tuples to Parry2D points
+    let parry_points: Vec<Point<f32>> = vertices
+        .into_iter()
+        .map(|(x, y)| Point::new(x, y))
+        .collect();
 
     // Convert vertices to Delaunator points
-    let delaunator_points: Vec<DelaunatorPoint> = vertices
+    let delaunator_points: Vec<DelaunatorPoint> = parry_points
         .iter()
         .map(|&point| DelaunatorPoint {
             x: point.x as f64,
@@ -34,14 +31,19 @@ fn main() {
         .collect();
 
     // Pass triangulated polygon to Hertel-Mehlhorn algorithm
-    let convex_polygons = hertel_mehlhorn(&vertices, &indices);
+    let convex_polygons = hertel_mehlhorn(&parry_points, &indices);
 
-    println!("Convex polygons:");
-    for (i, polygon) in convex_polygons.iter().enumerate() {
-        println!("Polygon {}:", i);
-        for point in polygon {
-            println!("({}, {})", point.x, point.y);
-        }
-        println!();
-    }
+    // Convert Parry2D points back to Python tuples
+    let python_polygons: Vec<Vec<(f32, f32)>> = convex_polygons
+        .into_iter()
+        .map(|polygon| polygon.into_iter().map(|point| (point.x, point.y)).collect())
+        .collect();
+
+    Ok(python_polygons)
+}
+
+#[pymodule]
+fn hertel(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(convex_decomposition, m)?)?;
+    Ok(())
 }
