@@ -1,4 +1,4 @@
-use delaunator::{Point as DelaunatorPoint, triangulate};
+use delaunator::{triangulate, Point as DelaunatorPoint};
 use parry2d::math::Point;
 use parry2d::transformation::hertel_mehlhorn;
 use pyo3::prelude::*;
@@ -36,7 +36,12 @@ fn convex_decomposition(vertices: Vec<(f32, f32)>) -> PyResult<Vec<Vec<(f32, f32
     // Convert Parry2D points back to Python tuples
     let python_polygons: Vec<Vec<(f32, f32)>> = convex_polygons
         .into_iter()
-        .map(|polygon| polygon.into_iter().map(|point| (point.x, point.y)).collect())
+        .map(|polygon| {
+            polygon
+                .into_iter()
+                .map(|point| (point.x, point.y))
+                .collect()
+        })
         .collect();
 
     Ok(python_polygons)
