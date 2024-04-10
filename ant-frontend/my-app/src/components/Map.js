@@ -8,18 +8,33 @@ import TableInfo from './TableInfo';
 function TrimbleMapComponent() {
     const [map, setMap] = useState(null);
     const [draw, setDraw] = useState(null);
-    const [surveyLinesMap] = useState(new Map());
+    //const [surveyLinesMap] = useState(new Map());
     const [waypoints, setWaypoints] = useState([]);
+
+
+    const extractWaypoints = (polygonData) => {
+        const waypoints = [];
+        polygonData.forEach(feature => {
+            if (feature.geometry.type === 'Polygon') {
+                feature.geometry.coordinates[0].forEach(coord => {
+                    waypoints.push({ lng: coord[0], lat: coord[1] });
+                });
+            }
+        });
+        return waypoints; 
+    };
+
 
     const processPolygonData = async () => {
         const polygonData = draw.getAll().features.filter(feature => feature.geometry.type === 'Polygon');
-        console.log("Polygon Data:", polygonData); //testing
 
         if (polygonData.length > 0) {
             try {
                 console.log('Sending polygon data to server:', polygonData);
                 const response = await axios.post(`${API_URL}/api/process-polygon`, { polygonData });
                 console.log('Server response:', response.data);
+                const extractedWaypoints = extractWaypoints(polygonData);
+                setWaypoints(extractedWaypoints);
 
             } catch (error) {
                 console.error('Error sending polygon data to server:', error);
@@ -83,12 +98,12 @@ function TrimbleMapComponent() {
                 map.off('draw.update', handlePolygonUpdate);
             };
         }
-    }, [map, draw, processPolygonData]);
+    }, [map, draw, processPolygonData]); 
 
     return (
         <div style={{ position: 'fixed', top: 0, left: 200, right: 0, bottom: 0 }}>
             <div id="myMap" style={{ width: '100%', height: '100%' }}></div>
-            <TableInfo waypoints={waypoints} />
+            <TableInfo waypoints={waypoints} /> 
         </div>
     );
 }
