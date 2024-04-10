@@ -14,7 +14,7 @@ const TableComponent = ({ waypoints }) => {
   
   return (
     <div>
-      <div style={{ display: visible ? 'block' : 'none', position: 'fixed', bottom: 110, right: 20, zIndex: 999, background: '#fff', padding: '10px', border: '1px solid #1677FF' }}>
+      <div style={{ display: visible ? 'block' : 'none', borderRadius: '5%', position: 'fixed', bottom: 110, right: 20, zIndex: 999, background: '#fff', padding: '10px', border: '1px solid #1677FF' }}>
         <TableInfo waypoints={waypoints}/>
       </div>
       <div style={{ position: 'fixed', bottom: 50, right: 0, zIndex: 999 }}>
