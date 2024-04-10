@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layout } from 'antd';
 import Sidebar from './Sidebar';
+import TableComponent from './TableComponent';
 import TrimbleMapComponent from './Map';
 
 const { Header, Content } = Layout;
@@ -16,6 +17,7 @@ const Dashboard = () => {
           <TrimbleMapComponent />
         </div>
       </Content>
+      <TableComponent />
     </Layout>
   );
 };

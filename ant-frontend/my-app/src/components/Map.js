@@ -2,15 +2,19 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import TrimbleMapsControl from './Drawtool';
 import { API_URL } from '../config';
+import TableInfo from './TableInfo';
 /* global TrimbleMapsControl */
 
 function TrimbleMapComponent() {
     const [map, setMap] = useState(null);
     const [draw, setDraw] = useState(null);
     const [surveyLinesMap] = useState(new Map());
+    const [waypoints, setWaypoints] = useState([]);
 
     const processPolygonData = async () => {
         const polygonData = draw.getAll().features.filter(feature => feature.geometry.type === 'Polygon');
+        console.log("Polygon Data:", polygonData); //testing
+
         if (polygonData.length > 0) {
             try {
                 console.log('Sending polygon data to server:', polygonData);
@@ -84,6 +88,7 @@ function TrimbleMapComponent() {
     return (
         <div style={{ position: 'fixed', top: 0, left: 200, right: 0, bottom: 0 }}>
             <div id="myMap" style={{ width: '100%', height: '100%' }}></div>
+            <TableInfo waypoints={waypoints} />
         </div>
     );
 }
