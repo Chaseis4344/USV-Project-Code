@@ -9,6 +9,7 @@ edition = "2021"
 parry2d = "*"
 delaunator = "*"
 pyo3 = {version = "*", features = ["extension-module"]}
+numpy = "0.21.0"
 
 
 [lib]
