@@ -6,11 +6,11 @@ import TableInfo from './TableInfo';
 
 const TableComponent = ({ waypoints }) => {
   const [visible, setVisible] = useState(false);
-
+  
   const toggleVisibility = () => {
     setVisible(!visible);
   };
-
+  
   
   return (
     <div>
