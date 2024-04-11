@@ -33,14 +33,21 @@ fn convex_decomposition(vertices: Vec<(f32, f32)>) -> PyResult<Vec<Vec<(f32, f32
     // Pass triangulated polygon to Hertel-Mehlhorn algorithm
     let convex_polygons = hertel_mehlhorn(&parry_points, &indices);
 
-    // Convert Parry2D points back to Python tuples
+    // Convert Parry2D points back to Python tuples and ensure closed loops
     let python_polygons: Vec<Vec<(f32, f32)>> = convex_polygons
         .into_iter()
         .map(|polygon| {
-            polygon
+            let mut polygon_tuples: Vec<(f32, f32)> = polygon
                 .into_iter()
                 .map(|point| (point.x, point.y))
-                .collect()
+                .collect();
+            
+            // Append the first point to the end to close the loop
+            if let Some(first_point) = polygon_tuples.first() {
+                polygon_tuples.push(*first_point);
+            }
+            
+            polygon_tuples
         })
         .collect();
 
