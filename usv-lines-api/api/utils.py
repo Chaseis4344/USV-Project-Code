@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import hertel
 
 DEFAULT_CONFIG = {
-  'apiKey': 'xxxxxxxxxxxxxx',
+  'apiKey': 'E006198D3D2D034197622ADE3E8DF111',
   'someSetting': 'light',
   'rememberMe': False,
   'typeOfLines': 'enabled',

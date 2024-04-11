@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import TrimbleMapsControl from './Drawtool';
 import { API_URL } from '../config';
+import { ConfigContext } from '../context/ConfigContext';
 /* global TrimbleMapsControl */
+
 
 function TrimbleMapComponent() {
     const [map, setMap] = useState(null);
     const [draw, setDraw] = useState(null);
     const [surveyLinesMap] = useState(new Map());
+    const {config, updateConfig} = useContext(ConfigContext);
 
     const processPolygonData = async () => {
         const polygonData = draw.getAll().features.filter(feature => feature.geometry.type === 'Polygon');
@@ -23,10 +26,13 @@ function TrimbleMapComponent() {
         }
     };
 
+
     useEffect(() => {
         if (!map) {
             import('@trimblemaps/trimblemaps-js').then(TrimbleMaps => {
-                TrimbleMaps.setAPIKey("E006198D3D2D034197622ADE3E8DF111");
+                
+                let apiKey = config.apiKey;
+                TrimbleMaps.setAPIKey(apiKey);
 
                 const newMap = new TrimbleMaps.Map({
                     container: "myMap",
