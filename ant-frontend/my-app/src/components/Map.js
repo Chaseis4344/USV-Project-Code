@@ -30,12 +30,11 @@ function TrimbleMapComponent() {
 
         if (polygonData.length > 0) {
             try {
-                console.log('Sending polygon data to server:', polygonData);
+                setWaypoints(polygonData[0].geometry.coordinates);
+                console.log('Sending polygon data to server:', polygonData[0].geometry.coordinates);
                 const response = await axios.post(`${API_URL}/api/process-polygon`, { polygonData });
-                console.log('Server response:', response.data);
-                const extractedWaypoints = extractWaypoints(polygonData);
-                setWaypoints(extractedWaypoints);
-
+               // console.log('Server response:', response.data);
+                
             } catch (error) {
                 console.error('Error sending polygon data to server:', error);
             }

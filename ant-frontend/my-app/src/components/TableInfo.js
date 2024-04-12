@@ -5,7 +5,7 @@ import './Map'
 
 
 const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
+    onChange: (selectedRowKeys, selectedRows) => {
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   },
 };
@@ -13,6 +13,7 @@ const rowSelection = {
 const TableInfo = ({ waypoints }) => {
 
   const [selectionType] = useState('checkbox');
+
   const columns = [
       {
           title: 'Waypoint',
@@ -31,22 +32,31 @@ const TableInfo = ({ waypoints }) => {
       },
   ];
 
-  let data = [];
+  let data =[];
 
   if (waypoints && waypoints.length > 0) {
-      data = waypoints.map((waypoint, index) => ({
+     /* data = waypoints.map((waypoint, index) => ({
           key: index,
           waypoint: `Waypoint ${index + 1}`,
-          latitude: waypoint.latitude,
-          longitude: waypoint.longitude,
-      }));
+          latitude: waypoint[0][index][0],
+          longitude: waypoint[0][index][1],
+      }));*/
+      waypoints.forEach((waypoint,index)=> {
+        data.push(({
+          key: index+1,
+          waypoint: `Waypoint ${index + 1}`,
+          latitude: waypoint[index][0],
+          longitude: waypoint[index][1],
+      }))
+      });
+     // setData(temp)
   }
+  
+  console.log("Data:"+JSON.stringify(data))
+  const data2 = useState(data);
 
   return (
-      <Table 
-      columns={columns}
-      dataSource={data} 
-      rowSelection={{
+      <Table columns={columns} dataSource={data2} rowSelection={{
         type: selectionType,
         ...rowSelection,
       }}/>
