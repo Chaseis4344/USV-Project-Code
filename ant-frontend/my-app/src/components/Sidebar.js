@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Button } from 'antd';
+import Tutorial from './Tutorial';
 
 const { Sider } = Layout;
 
@@ -38,12 +39,19 @@ const Sidebar = () => {
         <Menu theme="dark" mode="inline" selectedKeys={[currentPath]} style={{ marginTop: '32px' }}>
           <Menu.Item key="">
             <Link to="/">Dashboard</Link>
+            <button id="dashboard-tour" style={{ display: 'none' }}></button>
           </Menu.Item>
           <Menu.Item key="configuration">
             <Link to="/configuration">Configuration</Link>
+            <button id="configuration-tour" style={{ display: 'none' }}></button>
           </Menu.Item>
           {/* Add more menu items for other pages */}
         </Menu>
+
+        <div style={{ position: 'fixed', bottom: '15px', left: '145px', width: 50, height: 50 }}>
+          <Tutorial />
+        </div>
+
       </Sider>
       <Layout style={{ marginLeft: 200, marginTop: '64px' }}>
         {/* Rest of your content */}

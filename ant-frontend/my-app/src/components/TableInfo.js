@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Table } from 'antd';
 import '../App.css';
+import './Map'
+
 
 const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -9,7 +11,7 @@ const rowSelection = {
 };
 
 const TableInfo = ({ waypoints }) => {
- // console.log("Waypoints:", waypoints); //testing
+
   const [selectionType] = useState('checkbox');
 
   const columns = [
