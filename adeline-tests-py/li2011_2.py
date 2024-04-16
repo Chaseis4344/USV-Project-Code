@@ -236,6 +236,8 @@ vertices = np.array([
     [2.45, 6.44], [1.55, 5.45], [2.51, 3.67], [0.45, 0.75]
 ])
 
+
+
 convex_subregions, split_lines = recursive_decomposition(vertices)
 
 plt.figure(figsize=(8, 6))
