@@ -7,6 +7,7 @@ import TableComponent from './TableComponent';
 /* global TrimbleMapsControl */
 
 function TrimbleMapComponent() {
+  const [pathData, setPathData] = useState(null);
   const [map, setMap] = useState(null);
   const [draw, setDraw] = useState(null);
   //const [surveyLinesMap] = useState(new Map());
@@ -39,10 +40,47 @@ function TrimbleMapComponent() {
 
       try {
         const response = await axios.post(`${API_URL}/api/process-polygon`, { polygonData });
-        // console.log('Server response:', response.data);
+        console.log('Server response:', response.data);
+        setPathData(response.data);
       } catch (error) {
         console.error('Error sending polygon data to server:', error);
       }
+    }
+  };
+
+  useEffect(() => {
+    drawPath();
+  }, [pathData]);
+
+  const drawPath = () => {
+    if (map && pathData) {
+      const { px, py } = pathData;
+      const coordinates = px.map((x, i) => [x, py[i]]);
+  
+      map.addSource('path', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: coordinates,
+          },
+        },
+      });
+  
+      map.addLayer({
+        id: 'path',
+        type: 'line',
+        source: 'path',
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round',
+        },
+        paint: {
+          'line-color': '#ff0000',
+          'line-width': 3,
+        },
+      });
     }
   };
 
